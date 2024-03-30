@@ -17,8 +17,10 @@ function createCard(data, deleteCallback) {
 
 function handleCardDelete(cardData) {
     const indexCard = initialCards.indexOf(cardData);
-    initialCards.splice(indexCard, 1);
-    renderCards(initialCards);
+    if (indexCard !== -1) {
+        initialCards.splice(indexCard, 1);
+        renderCards(initialCards);
+    }
 }
 
 function renderCards(cards) {
