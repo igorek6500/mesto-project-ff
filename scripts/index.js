@@ -15,6 +15,12 @@ function createCard(data, deleteCallback) {
     return cardElement;
 }
 
+function handleCardDelete(cardData) {
+    const indexCard = initialCards.indexOf(cardData);
+    initialCards.splice(indexCard, 1);
+    renderCards(initialCards);
+}
+
 function renderCards(cards) {
     const placesList = document.querySelector('.places__list');
     placesList.innerHTML = '';
@@ -22,14 +28,6 @@ function renderCards(cards) {
         const cardElement = createCard(cardData, handleCardDelete);
         placesList.appendChild(cardElement);
     });
-}
-
-
-function handleCardDelete(cardData) {
-    console.log('Deleting card:', cardData);
-    const indexCard = initialCards.indexOf(cardData);
-    initialCards.splice(indexCard, 1);
-    renderCards(initialCards);
 }
 
 renderCards(initialCards);
