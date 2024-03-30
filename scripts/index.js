@@ -1,5 +1,8 @@
 function createCard(data, deleteCallback) {
-    const cardTemplate = document.querySelector('#card-template').content;
+    const cardTemplate = document
+        .querySelector('#card-template')
+        .content
+        .querySelector(".places__item");
     const cardElement = cardTemplate.cloneNode(true);
     const cardImage = cardElement.querySelector('.card__image');
     const cardTitle = cardElement.querySelector('.card__title');
