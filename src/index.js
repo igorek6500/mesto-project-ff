@@ -15,6 +15,13 @@ const imageCaption = imageModal.querySelector('.popup__caption');
 const imageElement = imageModal.querySelector('.popup__image');
 const popupList = [newCardModal, editProfileModal, imageModal];
 
+const profileEditForm = document.forms['edit-profile'];
+const popupInputs = document.querySelectorAll('.popup__input');
+
+
+const newCardForm = document.forms['new-place'];
+
+
 const openPopupWithImage = (evt) => {
     const {alt, src} = evt.target;
     setPopupCaption(alt);
@@ -61,6 +68,34 @@ const openEditProfileForm = () => {
     openModalPopup(editProfileModal);
 }
 
+const showInputError = (element) => {
+    console.log(element)
+    element.classList.add('popup__input-error');
+    let formError = element.parentNode.querySelector(`.${element.id}-error`);
+    console.log(formError)
+    formError.classList.add('error_active');
+
+}
+
+const hideInputError = (element) => {
+    console.log(element)
+    element.classList.remove('popup__input-error');
+    let formError = element.parentNode.querySelector(`.${element.id}-error`);
+    console.log(formError)
+    formError.classList.remove('error_active');
+}
+
+const isValid = (input) => {
+    console.log(input.target.validity)
+    console.log(input)
+
+    if (!input.target.validity.valid) {
+        showInputError(input.target);
+    } else {
+        hideInputError(input.target);
+    }
+}
+
 editProfileButton.addEventListener("click", openEditProfileForm);
 addCardButton.addEventListener("click", () => {
     openModalPopup(newCardModal);
@@ -70,3 +105,7 @@ editProfileModal.addEventListener("submit", submitEditProfileForm);
 
 renderCards(container, openPopupWithImage);
 setupModalCloseListeners(popupList);
+
+popupInputs.forEach(element => {
+    element.addEventListener('input', isValid);
+});
