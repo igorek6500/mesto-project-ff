@@ -68,10 +68,11 @@ const openEditProfileForm = () => {
     openModalPopup(editProfileModal);
 }
 
-const showInputError = (element) => {
+const showInputError = (element, errorMessage) => {
     console.log(element)
     element.classList.add('popup__input-error');
     let formError = element.parentNode.querySelector(`.${element.id}-error`);
+    formError.textContent = errorMessage;
     console.log(formError)
     formError.classList.add('error_active');
 
@@ -88,12 +89,19 @@ const hideInputError = (element) => {
 const isValid = (input) => {
     console.log(input.target.validity)
     console.log(input)
+    const value = input.target.value.trim();
 
-    if (!input.target.validity.valid) {
-        showInputError(input.target);
+
+    if (value === '') {
+        showInputError(input.target, input.target.validationMessage);
+    } else if (!/^[-a-zA-Zа-яА-ЯёЁ\s]+$/.test(value) && input.target.type !== "url") {
+        showInputError(input.target, 'Поле может содержать только латинские и русские буквы, а также тире');
+    } else if (input.target.type === "url") {
+        showInputError(input.target, input.target.validationMessage)
     } else {
         hideInputError(input.target);
     }
+
 }
 
 editProfileButton.addEventListener("click", openEditProfileForm);
