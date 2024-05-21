@@ -49,7 +49,9 @@ const isValid = (input) => {
 function clearForm(domElement) {
     const form = domElement.querySelector('.popup__form');
     form.reset();
-    form.querySelector('.button').disabled = true;
+    const button = form.querySelector('.button');
+    button.disabled = true;
+    button.classList.add('popup__button_disabled');
 }
 
 export {isValid, clearForm}
