@@ -1,3 +1,5 @@
+import {clearForm} from "./validation";
+
 const closeWithEscapeButton = (e) => {
     if (e.key === "Escape") {
         const modalIsOpen = document.querySelector('.popup_is-opened');
@@ -10,6 +12,9 @@ const closeWithEscapeButton = (e) => {
 const openModalPopup = (domElement) => {
     domElement.classList.toggle("popup_is-opened");
     document.addEventListener('keydown', closeWithEscapeButton);
+    if (domElement.classList.contains('popup_type_new-card')) {
+        clearForm(domElement);
+    }
 }
 
 const closeModalPopup = (domElement) => {
