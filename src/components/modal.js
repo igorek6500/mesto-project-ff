@@ -1,5 +1,6 @@
 import {clearForm} from "./validation";
 
+
 const closeWithEscapeButton = (e) => {
     if (e.key === "Escape") {
         const modalIsOpen = document.querySelector('.popup_is-opened');
@@ -34,5 +35,6 @@ const setupModalCloseListeners = (popupList) => {
         });
     });
 }
+
 
 export {openModalPopup, closeModalPopup, setupModalCloseListeners};

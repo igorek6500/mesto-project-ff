@@ -1,4 +1,5 @@
 const regExp = /^[-a-zA-Zа-яА-ЯёЁ\s]+$/;
+
 const showInputError = (element, errorMessage) => {
     element.classList.add('popup__input-error');
     let formError = element.parentNode.querySelector(`.${element.id}-error`);
@@ -53,5 +54,6 @@ function clearForm(domElement) {
     button.disabled = true;
     button.classList.add('popup__button_disabled');
 }
+
 
 export {isValid, clearForm}

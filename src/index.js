@@ -1,78 +1,59 @@
 import './pages/index.css';
-import {closeModalPopup, openModalPopup, setupModalCloseListeners} from "./components/modal";
-import {createCard, onDeleteCard, onLike} from "./components/card";
-import renderCards from "./components/initialCards";
+import {updateData} from "./components/requests";
+import {openEditProfileForm, submitEditProfileForm, updateProfile} from "./components/profile";
+import {openModalPopup, setupModalCloseListeners} from "./components/modal";
+
+import {openPopupWithImage, renderCards, submitNewCardForm} from "./components/card";
 import {isValid} from "./components/validation";
 
-const container = document.querySelector('.places__list');
 const editProfileButton = document.querySelector('.profile__edit-button');
-const addCardButton = document.querySelector('.profile__add-button');
-const newCardModal = document.querySelector(".popup_type_new-card");
 const editProfileModal = document.querySelector(".popup_type_edit");
-const imageModal = document.querySelector(".popup_type_image");
 const profileName = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
-const imageCaption = imageModal.querySelector('.popup__caption');
-const imageElement = imageModal.querySelector('.popup__image');
+const editProfileForm = document.forms['edit-profile'];
+
+const container = document.querySelector('.places__list');
+const addCardButton = document.querySelector('.profile__add-button');
+const newCardModal = document.querySelector(".popup_type_new-card");
+const imageModal = document.querySelector(".popup_type_image");
+const newPlaceForm = document.forms['new-place'];
+
 const popupList = [newCardModal, editProfileModal, imageModal];
-const profileEditForm = document.forms['edit-profile'];
+
 const popupInputs = document.querySelectorAll('.popup__input');
-const newCardForm = document.forms['new-place'];
+let user;
 
+updateData().then((data) => {
+    if (data.user) {
+        user = data.user;
 
-const openPopupWithImage = (evt) => {
-    const {alt, src} = evt.target;
-    setPopupCaption(alt);
-    setPopupImage(src, alt);
-    openModalPopup(imageModal);
-}
-const setPopupCaption = (caption) => {
-    imageCaption.textContent = caption;
-}
-const setPopupImage = (src, alt) => {
-    imageElement.src = src;
-    imageElement.alt = alt;
-}
-const changeProfile = (name, description) => {
-    profileName.textContent = name;
-    profileDescription.textContent = description;
-}
-const submitNewCardForm = (e) => {
-    e.preventDefault();
-    const newPlaceForm = document.forms['new-place'];
-    const newCard = {
-        name: newPlaceForm.elements['place-name'].value,
-        link: newPlaceForm.elements['link'].value
-    };
-    container.prepend(createCard(newCard, onDeleteCard, onLike, openPopupWithImage));
-    closeModalPopup(newCardModal);
-    newPlaceForm.reset();
-}
-const submitEditProfileForm = (e) => {
-    e.preventDefault();
-    const editProfileForm = document.forms['edit-profile'];
-    changeProfile(editProfileForm.elements.name.value, editProfileForm.elements.description.value);
-    closeModalPopup(editProfileModal);
-}
-const openEditProfileForm = () => {
-    document.forms['edit-profile'].name.value = profileName.textContent;
-    document.forms['edit-profile'].description.value = profileDescription.textContent;
-    openModalPopup(editProfileModal);
-}
+        updateProfile(profileName, profileDescription);
+    }
+    if (data.cards) {
 
+        renderCards(container, data.user, (e) => {
+            openPopupWithImage(e, imageModal)
+        });
+    }
+})
+setupModalCloseListeners(popupList);
 
-editProfileButton.addEventListener("click", openEditProfileForm);
+editProfileButton.addEventListener("click", () => {
+    openEditProfileForm(profileName, profileDescription, editProfileModal, editProfileForm)
+});
+editProfileModal.addEventListener("submit", (e) => {
+    submitEditProfileForm(e, editProfileModal, profileName, profileDescription, editProfileForm);
+});
 addCardButton.addEventListener("click", () => {
     openModalPopup(newCardModal);
 });
-newCardModal.addEventListener("submit", submitNewCardForm);
-editProfileModal.addEventListener("submit", submitEditProfileForm);
-
-renderCards(container, openPopupWithImage);
-setupModalCloseListeners(popupList);
-
+newCardModal.addEventListener("submit", (e) => {
+    submitNewCardForm(e, imageModal, user, container, newCardModal, newPlaceForm);
+});
 popupInputs.forEach(element => {
     element.addEventListener('input', (event) => {
         isValid(event.target)
     });
 });
+
+
