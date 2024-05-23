@@ -1,20 +1,3 @@
-// export const editProfileButton = document.querySelector('.profile__edit-button');
-// export const editProfileModal = document.querySelector('.popup_type_edit');
-// export const profileName = document.querySelector('.profile__title');
-// export const profileDescription = document.querySelector('.profile__description');
-// export const editProfileForm = document.forms['edit-profile'];
-// export const editAvatarForm = document.forms['new-avatar'];
-// export const editAvatarButton = document.querySelector('.profile__image-edit-wrapper');
-// export const editAvatarModal = document.querySelector('.popup_type_new-avatar');
-// export const avatar = document.querySelector('.profile__image');
-// export const container = document.querySelector('.places__list');
-// export const addCardButton = document.querySelector('.profile__add-button');
-// export const newCardModal = document.querySelector('.popup_type_new-card');
-// export const imageModal = document.querySelector('.popup_type_image');
-// export const newPlaceForm = document.forms['new-place'];
-// export const popupList = [newCardModal, editProfileModal, imageModal, editAvatarModal];
-// export const popupInputs = document.querySelectorAll('.popup__input');
-
 export const DOM_ELEMENTS = {
     editProfileButton: document.querySelector('.profile__edit-button'),
     editProfileModal: document.querySelector('.popup_type_edit'),
@@ -37,4 +20,29 @@ export const DOM_ELEMENTS = {
         document.querySelector('.popup_type_new-avatar')
     ],
     popupInputs: document.querySelectorAll('.popup__input')
+};
+
+const API_BASE_URL = 'https://mesto.nomoreparties.co/v1/';
+const API_TOKEN = 'c85a9ee5-da17-44f1-aa81-04f86597517f';
+const GROUP_ID = 'wff-cohort-14/';
+const API_FINAL_URL = `${API_BASE_URL}${GROUP_ID}`;
+const API_USER_ENDPOINT = `${API_FINAL_URL}users/me`;
+const API_CARDS_ENDPOINT = `${API_FINAL_URL}cards`;
+const API_CARDS_LIKES_ENDPOINT = `${API_CARDS_ENDPOINT}/likes/`;
+const API_USER_AVATAR_ENDPOINT = `${API_USER_ENDPOINT}/avatar`;
+const API_POST_HEADERS = {
+    authorization: API_TOKEN,
+    'Content-Type': 'application/json'
+};
+const API_GET_HEADERS = {
+    authorization: API_TOKEN
+};
+
+export {
+    API_USER_ENDPOINT,
+    API_GET_HEADERS,
+    API_POST_HEADERS,
+    API_CARDS_ENDPOINT,
+    API_CARDS_LIKES_ENDPOINT,
+    API_USER_AVATAR_ENDPOINT
 };

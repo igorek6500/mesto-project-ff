@@ -1,5 +1,5 @@
 import {closeModalPopup, openModalPopup} from "./modal";
-import {getUserData, updateAvatar, updateUserData} from "./requests";
+import {getUserData, updateAvatar, updateUserData} from "./api";
 
 function updateProfileInfo(name, description, avatar, profileName, profileDescription, profileAvatar) {
     profileName.textContent = name;

@@ -1,5 +1,5 @@
 import './pages/index.css';
-import {updateData} from "./components/requests";
+import {updateData} from "./components/api";
 import {openEditProfileForm, submitNewAvatar, submitProfileEditForm, updateProfile} from "./components/profile";
 import {openModalPopup, setupModalCloseListeners} from "./components/modal";
 import {openPopupWithImage, renderCards, submitNewCardForm} from "./components/card";

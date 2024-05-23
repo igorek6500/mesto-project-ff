@@ -1,5 +1,5 @@
 import {closeModalPopup, openModalPopup} from "./modal";
-import {createCardData, deleteCard, getCardsData, likeCard, unlikeCard} from "./requests";
+import {createCardData, deleteCard, getCardsData, likeCard, unlikeCard} from "./api";
 
 
 const cardTemplate = document

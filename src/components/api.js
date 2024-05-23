@@ -1,18 +1,11 @@
-const API_BASE_URL = 'https://mesto.nomoreparties.co/v1/';
-const API_TOKEN = 'c85a9ee5-da17-44f1-aa81-04f86597517f';
-const GROUP_ID = 'wff-cohort-14/';
-const API_FINAL_URL = `${API_BASE_URL}${GROUP_ID}`;
-const API_USER_ENDPOINT = `${API_FINAL_URL}users/me`;
-const API_CARDS_ENDPOINT = `${API_FINAL_URL}cards`;
-const API_CARDS_LIKES_ENDPOINT = `${API_CARDS_ENDPOINT}/likes/`;
-const API_USER_AVATAR_ENDPOINT = `${API_USER_ENDPOINT}/avatar`;
-const API_POST_HEADERS = {
-    authorization: API_TOKEN,
-    'Content-Type': 'application/json'
-};
-const API_GET_HEADERS = {
-    authorization: API_TOKEN
-};
+import {
+    API_CARDS_ENDPOINT,
+    API_CARDS_LIKES_ENDPOINT,
+    API_GET_HEADERS,
+    API_POST_HEADERS,
+    API_USER_AVATAR_ENDPOINT,
+    API_USER_ENDPOINT
+} from "./constants";
 
 async function getUserData() {
     try {
