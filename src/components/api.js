@@ -16,11 +16,11 @@ async function getUserData() {
         if (response.ok) {
             return await response.json();
         } else {
-            throw new Error(`HTTP error ${response.status}`);
+            await Promise.reject(`HTTP error ${response.status}`);
         }
     } catch (error) {
         console.error('Error fetching user data:', error);
-        return null; // или значение по умолчанию
+        return null;
     }
 }
 
@@ -37,7 +37,7 @@ async function updateUserData(name, about) {
             console.log('User profile updated:', updatedUser);
             return updatedUser;
         } else {
-            throw new Error(`Error updating profile: ${response.status} - ${response.statusText}`);
+            await Promise.reject(`Error updating profile: ${response.status} - ${response.statusText}`);
         }
     } catch (error) {
         console.error('Error updating profile:', error);
@@ -54,7 +54,7 @@ async function getCardsData() {
         if (response.ok) {
             return await response.json();
         } else {
-            throw new Error(`HTTP error ${response.status}`);
+            await Promise.reject(`HTTP error ${response.status}`);
         }
     } catch (error) {
         console.error('Error fetching cards data:', error);
@@ -73,7 +73,7 @@ async function createCardData(name, link) {
         if (response.ok) {
             return await response.json();
         } else {
-            throw new Error(`Ошибка: ${response.status}`);
+            await Promise.reject(`Ошибка: ${response.status}`);
         }
     } catch (error) {
         console.error('Error creating new card:', error);
@@ -94,7 +94,7 @@ async function unlikeCard(card, cardLikeButton, cardLikes) {
             cardLikes.textContent = updatedCard.likes.length;
             return updatedCard;
         } else {
-            throw new Error(`Ошибка: ${response.status}`);
+            await Promise.reject(`Ошибка: ${response.status}`);
         }
     } catch (error) {
         console.error('Error unliking card:', error);
@@ -115,7 +115,7 @@ async function likeCard(card, cardLikeButton, cardLikes) {
             cardLikes.textContent = updatedCard.likes.length;
             return updatedCard;
         } else {
-            throw new Error(`Ошибка: ${response.status}`);
+            await Promise.reject(`Ошибка: ${response.status}`);
         }
     } catch (error) {
         console.error('Error liking card:', error);
@@ -133,7 +133,7 @@ async function deleteCard(card) {
         if (response.ok) {
             console.log('Карточка успешно удалена');
         } else {
-            throw new Error(`Ошибка: ${response.status}`);
+            await Promise.reject(`Ошибка: ${response.status}`);
         }
     } catch (error) {
         console.error('Ошибка при удалении карточки:', error);
@@ -153,7 +153,7 @@ async function updateAvatar(link) {
             console.log('Avatar updated successfully');
             return response;
         } else {
-            throw new Error(`Ошибка обновления профиля: ${response.status} - ${response.statusText}`);
+            await Promise.reject(`Ошибка обновления профиля: ${response.status} - ${response.statusText}`);
         }
     } catch (error) {
         console.error('Ошибка обновления профиля:', error);
