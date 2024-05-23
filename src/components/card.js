@@ -1,5 +1,5 @@
 import {closeModalPopup, openModalPopup} from "./modal";
-import {addNewCard, deleteCard, getCards, setLike, unsetLike} from "./requests";
+import {createCardData, deleteCard, getCardsData, likeCard, unlikeCard} from "./requests";
 
 
 const cardTemplate = document
@@ -7,36 +7,30 @@ const cardTemplate = document
     .content
     .querySelector('.places__item');
 
-const onDeleteCard = (cardElement, card) => {
-    deleteCard(card);
-    cardElement.remove();
+function onDeleteCard(cardElement, card) {
+    deleteCard(card).then(() => cardElement.remove());
 }
 
-
-const onLike = (cardElement, card, user) => {
-    console.log(card)
+function onLike(cardElement, card, user) {
     const cardLikeButton = cardElement.querySelector('.card__like-button');
     const cardLikes = cardElement.querySelector('.card__likes');
-
     let isLiked = card.likes.some(like => like._id === user._id);
-
     if (isLiked) {
-        // Убрать лайк
-        unsetLike(card, cardLikeButton, cardLikes)
+        unlikeCard(card, cardLikeButton, cardLikes)
             .then(updatedCard => {
                 card.likes = updatedCard.likes;
                 cardLikes.textContent = updatedCard.likes.length === 0 ? '' : updatedCard.likes.length;
             });
     } else {
-        // Поставить лайк
-        setLike(card, cardLikeButton, cardLikes)
+        likeCard(card, cardLikeButton, cardLikes)
             .then(updatedCard => {
                 card.likes = updatedCard.likes;
                 cardLikes.textContent = updatedCard.likes.length === 0 ? '' : updatedCard.likes.length;
             });
     }
-};
-const createCard = (card, user, onDeleteCard, onLike, onImageClick) => {
+}
+
+function createCard(card, user, onDeleteCard, onLike, onImageClick) {
     const cardElement = cardTemplate.cloneNode(true);
     const cardImage = cardElement.querySelector('.card__image');
     const cardTitle = cardElement.querySelector('.card__title');
@@ -59,19 +53,16 @@ const createCard = (card, user, onDeleteCard, onLike, onImageClick) => {
     return cardElement;
 }
 
-const submitNewCardForm = (e, imageModal, user, container, newCardModal, newPlaceForm) => {
+function submitNewCardForm(e, imageModal, user, container, newCardModal, newPlaceForm) {
     e.preventDefault();
 
-    addNewCard(newPlaceForm.elements['place-name'].value, newPlaceForm.elements['link'].value).then(() => {
-        // Получить обновленный список карточек
-        return getCards();
+    createCardData(newPlaceForm.elements['place-name'].value, newPlaceForm.elements['link'].value).then(() => {
+        return getCardsData();
     })
         .then(() => {
-            // Очистить контейнер карточек
             while (container.firstChild) {
                 container.removeChild(container.firstChild);
             }
-            // Отрендерить обновленный список карточек
             renderCards(container, user, (e) => {
                 openPopupWithImage(e, imageModal)
             })
@@ -80,24 +71,24 @@ const submitNewCardForm = (e, imageModal, user, container, newCardModal, newPlac
         })
 }
 
-const openPopupWithImage = (evt, imageModal) => {
-    console.log(imageModal)
+function openPopupWithImage(evt, imageModal) {
     const {alt, src} = evt.target;
     setPopupCaption(alt, imageModal.querySelector('.popup__caption'));
     setPopupImage(src, alt, imageModal.querySelector('.popup__image'));
     openModalPopup(imageModal);
 }
 
-const setPopupCaption = (caption, imageCaption) => {
+function setPopupCaption(caption, imageCaption) {
     imageCaption.textContent = caption;
 }
-const setPopupImage = (src, alt, imageElement) => {
+
+function setPopupImage(src, alt, imageElement) {
     imageElement.src = src;
     imageElement.alt = alt;
 }
 
 function renderCards(cardsContainer, user, openPopupWithImage) {
-    getCards().then(data => {
+    getCardsData().then(data => {
         data.forEach(x => {
             cardsContainer.appendChild(createCard(x, user, onDeleteCard, onLike, openPopupWithImage));
         });

@@ -1,23 +1,25 @@
-const baseUrl = 'https://mesto.nomoreparties.co/v1/';
-const token = 'c85a9ee5-da17-44f1-aa81-04f86597517f';
-const groupId = 'wff-cohort-14/';
-const finalUrl = baseUrl + groupId;
-const userEndpoint = finalUrl + 'users/me';
-const cardsEndpoint = finalUrl + 'cards';
-const cardsLikes = cardsEndpoint + '/likes/'
-const postHeaders = {
-    authorization: token,
+const API_BASE_URL = 'https://mesto.nomoreparties.co/v1/';
+const API_TOKEN = 'c85a9ee5-da17-44f1-aa81-04f86597517f';
+const GROUP_ID = 'wff-cohort-14/';
+const API_FINAL_URL = `${API_BASE_URL}${GROUP_ID}`;
+const API_USER_ENDPOINT = `${API_FINAL_URL}users/me`;
+const API_CARDS_ENDPOINT = `${API_FINAL_URL}cards`;
+const API_CARDS_LIKES_ENDPOINT = `${API_CARDS_ENDPOINT}/likes/`;
+const API_USER_AVATAR_ENDPOINT = `${API_USER_ENDPOINT}/avatar`;
+const API_POST_HEADERS = {
+    authorization: API_TOKEN,
     'Content-Type': 'application/json'
 };
-const getHeaders = {
-    authorization: token
+const API_GET_HEADERS = {
+    authorization: API_TOKEN
 };
 
-async function getUser() {
+async function getUserData() {
     try {
-        const response = await fetch(userEndpoint, {
-            headers: getHeaders
+        const response = await fetch(API_USER_ENDPOINT, {
+            headers: API_GET_HEADERS
         });
+
         if (response.ok) {
             return await response.json();
         } else {
@@ -25,20 +27,18 @@ async function getUser() {
         }
     } catch (error) {
         console.error('Error fetching user data:', error);
-        return null; // или какое-то значение по умолчанию
+        return null; // или значение по умолчанию
     }
 }
 
-async function updateUser(updatedName, updatedDescription) {
+async function updateUserData(name, about) {
     try {
-        const response = await fetch(userEndpoint, {
-            headers: postHeaders,
+        const response = await fetch(API_USER_ENDPOINT, {
+            headers: API_POST_HEADERS,
             method: 'PATCH',
-            body: JSON.stringify({
-                name: updatedName,
-                about: updatedDescription
-            })
+            body: JSON.stringify({name, about})
         });
+
         if (response.ok) {
             const updatedUser = await response.json();
             console.log('User profile updated:', updatedUser);
@@ -52,111 +52,135 @@ async function updateUser(updatedName, updatedDescription) {
     }
 }
 
-async function getCards() {
+async function getCardsData() {
     try {
-        const response = await fetch(cardsEndpoint, {
-            headers: getHeaders
+        const response = await fetch(API_CARDS_ENDPOINT, {
+            headers: API_GET_HEADERS
         });
+
         if (response.ok) {
             return await response.json();
         } else {
             throw new Error(`HTTP error ${response.status}`);
         }
     } catch (error) {
-        console.error('Error fetching user data:', error);
-        return null; // или какое-то значение по умолчанию
+        console.error('Error fetching cards data:', error);
+        return null;
     }
 }
 
-function addNewCard(name, link) {
+async function createCardData(name, link) {
+    try {
+        const response = await fetch(API_CARDS_ENDPOINT, {
+            method: 'POST',
+            headers: API_POST_HEADERS,
+            body: JSON.stringify({name, link})
+        });
 
-    return fetch(cardsEndpoint, {
-        method: 'POST',
-        headers: postHeaders,
-        body: JSON.stringify({
-            name: name,
-            link: link
-        })
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                return Promise.reject(`Ошибка: ${response.status}`);
-            }
-        })
+        if (response.ok) {
+            return await response.json();
+        } else {
+            throw new Error(`Ошибка: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error creating new card:', error);
+        throw error;
+    }
 }
 
-function unsetLike(card, cardLikeButton, cardLikes) {
-    console.log(card)
-    return fetch(cardsLikes + card._id, {
-        method: 'DELETE',
-        headers: postHeaders
-    })
-        .then(res => res.json())
-        .then(updatedCard => {
-            console.log('DELETE')
+async function unlikeCard(card, cardLikeButton, cardLikes) {
+    try {
+        const response = await fetch(`${API_CARDS_LIKES_ENDPOINT}${card._id}`, {
+            method: 'DELETE',
+            headers: API_POST_HEADERS
+        });
+
+        if (response.ok) {
+            const updatedCard = await response.json();
             cardLikeButton.classList.remove('card__like-button_is-active');
             cardLikes.textContent = updatedCard.likes.length;
             return updatedCard;
-        })
-        .catch(err => console.error(err));
+        } else {
+            throw new Error(`Ошибка: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error unliking card:', error);
+        throw error;
+    }
 }
 
-function setLike(card, cardLikeButton, cardLikes) {
-    return fetch(cardsLikes + card._id, {
-        method: 'PUT',
-        headers: postHeaders
-    })
-        .then(res => res.json())
-        .then(updatedCard => {
-            console.log('PUT')
+async function likeCard(card, cardLikeButton, cardLikes) {
+    try {
+        const response = await fetch(`${API_CARDS_LIKES_ENDPOINT}${card._id}`, {
+            method: 'PUT',
+            headers: API_POST_HEADERS
+        });
+
+        if (response.ok) {
+            const updatedCard = await response.json();
             cardLikeButton.classList.add('card__like-button_is-active');
             cardLikes.textContent = updatedCard.likes.length;
             return updatedCard;
-        })
-        .catch(err => console.error(err));
+        } else {
+            throw new Error(`Ошибка: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error liking card:', error);
+        throw error;
+    }
 }
 
-function deleteCard(card) {
+async function deleteCard(card) {
     try {
-        fetch(cardsEndpoint + '/' + card._id, {
+        const response = await fetch(`${API_CARDS_ENDPOINT}/${card._id}`, {
             method: 'DELETE',
-            headers: postHeaders
-        }).then(r => console.log(r));
-    } catch (err) {
-        console.error('Ошибка при удалении карточки:', err);
+            headers: API_POST_HEADERS
+        });
+
+        if (response.ok) {
+            console.log('Карточка успешно удалена');
+        } else {
+            throw new Error(`Ошибка: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Ошибка при удалении карточки:', error);
+        throw error;
+    }
+}
+
+async function updateAvatar(link) {
+    try {
+        const response = await fetch(API_USER_AVATAR_ENDPOINT, {
+            method: 'PATCH',
+            headers: API_POST_HEADERS,
+            body: JSON.stringify({avatar: link})
+        });
+
+        if (response.ok) {
+            console.log('Avatar updated successfully');
+            return response;
+        } else {
+            throw new Error(`Ошибка обновления профиля: ${response.status} - ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Ошибка обновления профиля:', error);
+        throw error;
     }
 }
 
 async function updateData() {
     try {
-        const [userResponse, cardsResponse] = await Promise.all([
-            fetch(userEndpoint, {
-                headers: {
-                    authorization: token
-                }
-            }),
-            fetch(cardsEndpoint, {
-                headers: {
-                    authorization: token
-                }
-            })
+        const [userData, cardsData] = await Promise.all([
+            getUserData(),
+            getCardsData()
         ]);
 
-        if (userResponse.ok && cardsResponse.ok) {
-            const userData = await userResponse.json();
-            const cardsData = await cardsResponse.json();
-
-            return {
-                user: userData,
-                cards: cardsData
-            };
-        } else {
-            throw new Error(`HTTP error ${userResponse.status} or ${cardsResponse.status}`);
-        }
+        return {
+            user: userData,
+            cards: cardsData
+        };
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Ошибка при получении данных:', error);
         return {
             user: null,
             cards: null
@@ -164,4 +188,14 @@ async function updateData() {
     }
 }
 
-export {getUser, updateUser, getCards, addNewCard, deleteCard, setLike, unsetLike, updateData}
+export {
+    getUserData,
+    updateUserData,
+    getCardsData,
+    createCardData,
+    deleteCard,
+    likeCard,
+    unlikeCard,
+    updateData,
+    updateAvatar
+}

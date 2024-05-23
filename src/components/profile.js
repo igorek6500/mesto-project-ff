@@ -1,37 +1,51 @@
 import {closeModalPopup, openModalPopup} from "./modal";
-import {getUser, updateUser} from "./requests";
+import {getUserData, updateAvatar, updateUserData} from "./requests";
 
-const changeProfile = (name, description, profileName, profileDescription) => {
+function updateProfileInfo(name, description, avatar, profileName, profileDescription, profileAvatar) {
     profileName.textContent = name;
     profileDescription.textContent = description;
+    profileAvatar.style.backgroundImage = `url('${avatar}')`;
 }
-const submitEditProfileForm = (e, editProfileModal, profileName, profileDescription, editProfileForm) => {
-    e.preventDefault();
-    updateUser(
+
+function submitProfileEditForm(event, editProfileModal, profileName, profileDescription, editProfileForm, profileAvatar) {
+    event.preventDefault();
+    updateUserData(
         editProfileForm.elements.name.value,
         editProfileForm.elements.description.value
     )
         .then(data => {
-            changeProfile(
+            updateProfileInfo(
                 data.name,
                 data.about,
+                data.avatar,
                 profileName,
-                profileDescription
+                profileDescription,
+                profileAvatar
             )
-            console.log(data)
         });
     closeModalPopup(editProfileModal);
 }
-const openEditProfileForm = (profileName, profileDescription, editProfileModal, editProfileForm) => {
+
+function openEditProfileForm(profileName, profileDescription, editProfileModal, editProfileForm) {
     editProfileForm.name.value = profileName.textContent;
     editProfileForm.description.value = profileDescription.textContent;
     openModalPopup(editProfileModal);
 }
 
-function updateProfile(profileName, profileDescription) {
-    getUser().then(user => {
-        changeProfile(user.name, user.about, profileName, profileDescription)
+
+function submitNewAvatar(event, editAvatarModal, editAvatarForm, profileName, profileDescription, profileAvatar) {
+    event.preventDefault();
+    updateAvatar(editAvatarForm.link.value).then(() => {
+        updateProfile(profileName, profileDescription, profileAvatar)
+        closeModalPopup(editAvatarModal)
+    });
+
+}
+
+function updateProfile(profileName, profileDescription, profileAvatar) {
+    getUserData().then(user => {
+        updateProfileInfo(user.name, user.about, user.avatar, profileName, profileDescription, profileAvatar)
     });
 }
 
-export {submitEditProfileForm, openEditProfileForm, updateProfile}
+export {submitProfileEditForm, openEditProfileForm, updateProfile, submitNewAvatar}

@@ -1,59 +1,78 @@
 import './pages/index.css';
 import {updateData} from "./components/requests";
-import {openEditProfileForm, submitEditProfileForm, updateProfile} from "./components/profile";
+import {openEditProfileForm, submitNewAvatar, submitProfileEditForm, updateProfile} from "./components/profile";
 import {openModalPopup, setupModalCloseListeners} from "./components/modal";
-
 import {openPopupWithImage, renderCards, submitNewCardForm} from "./components/card";
 import {isValid} from "./components/validation";
+import {DOM_ELEMENTS} from "./components/constants";
 
-const editProfileButton = document.querySelector('.profile__edit-button');
-const editProfileModal = document.querySelector(".popup_type_edit");
-const profileName = document.querySelector('.profile__title');
-const profileDescription = document.querySelector('.profile__description');
-const editProfileForm = document.forms['edit-profile'];
-
-const container = document.querySelector('.places__list');
-const addCardButton = document.querySelector('.profile__add-button');
-const newCardModal = document.querySelector(".popup_type_new-card");
-const imageModal = document.querySelector(".popup_type_image");
-const newPlaceForm = document.forms['new-place'];
-
-const popupList = [newCardModal, editProfileModal, imageModal];
-
-const popupInputs = document.querySelectorAll('.popup__input');
 let user;
 
 updateData().then((data) => {
     if (data.user) {
         user = data.user;
 
-        updateProfile(profileName, profileDescription);
+        updateProfile(
+            DOM_ELEMENTS.profileName,
+            DOM_ELEMENTS.profileDescription,
+            DOM_ELEMENTS.avatar
+        );
     }
     if (data.cards) {
 
-        renderCards(container, data.user, (e) => {
-            openPopupWithImage(e, imageModal)
+        renderCards(DOM_ELEMENTS.container, data.user, (e) => {
+            openPopupWithImage(e, DOM_ELEMENTS.imageModal)
         });
     }
 })
-setupModalCloseListeners(popupList);
+setupModalCloseListeners(DOM_ELEMENTS.popupList);
 
-editProfileButton.addEventListener("click", () => {
-    openEditProfileForm(profileName, profileDescription, editProfileModal, editProfileForm)
+DOM_ELEMENTS.editProfileButton.addEventListener("click", () => {
+    openEditProfileForm(
+        DOM_ELEMENTS.profileName,
+        DOM_ELEMENTS.profileDescription,
+        DOM_ELEMENTS.editProfileModal,
+        DOM_ELEMENTS.editProfileForm
+    )
 });
-editProfileModal.addEventListener("submit", (e) => {
-    submitEditProfileForm(e, editProfileModal, profileName, profileDescription, editProfileForm);
+DOM_ELEMENTS.editProfileModal.addEventListener("submit", (e) => {
+    submitProfileEditForm(
+        e,
+        DOM_ELEMENTS.editProfileModal,
+        DOM_ELEMENTS.profileName,
+        DOM_ELEMENTS.profileDescription,
+        DOM_ELEMENTS.editProfileForm,
+        DOM_ELEMENTS.avatar
+    );
 });
-addCardButton.addEventListener("click", () => {
-    openModalPopup(newCardModal);
+DOM_ELEMENTS.addCardButton.addEventListener("click", () => {
+    openModalPopup(DOM_ELEMENTS.newCardModal);
 });
-newCardModal.addEventListener("submit", (e) => {
-    submitNewCardForm(e, imageModal, user, container, newCardModal, newPlaceForm);
+DOM_ELEMENTS.newCardModal.addEventListener("submit", (e) => {
+    submitNewCardForm(
+        e,
+        DOM_ELEMENTS.imageModal,
+        user,
+        DOM_ELEMENTS.container,
+        DOM_ELEMENTS.newCardModal,
+        DOM_ELEMENTS.newPlaceForm
+    );
 });
-popupInputs.forEach(element => {
-    element.addEventListener('input', (event) => {
+DOM_ELEMENTS.popupInputs.forEach(element => {
+    element.addEventListener("input", (event) => {
         isValid(event.target)
     });
 });
-
-
+DOM_ELEMENTS.editAvatarButton.addEventListener('click', () => {
+    openModalPopup(DOM_ELEMENTS.editAvatarModal)
+});
+DOM_ELEMENTS.editAvatarModal.addEventListener("submit", (e) => {
+    submitNewAvatar(
+        e,
+        DOM_ELEMENTS.editAvatarModal,
+        DOM_ELEMENTS.editAvatarForm,
+        DOM_ELEMENTS.profileName,
+        DOM_ELEMENTS.profileDescription,
+        DOM_ELEMENTS.avatar
+    );
+})

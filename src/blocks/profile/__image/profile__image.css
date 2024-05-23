@@ -1,4 +1,5 @@
 .profile__image {
+  position: relative;
   width: 120px;
   height: 120px;
   -webkit-border-radius: 50%;
@@ -8,6 +9,32 @@
   background-position: center;
   margin: 0 29px 0 0;
 }
+
+.profile__image-edit-wrapper {
+  display: none;
+  width: 120px;
+  height: 120px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.profile__image-edit {
+  max-width: 26px;
+}
+
+.profile__image:hover {
+  cursor: pointer;
+}
+
+.profile__image:hover > .profile__image-edit-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 @media screen and (max-width: 740px) {
   .profile__image {
