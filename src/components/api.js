@@ -8,183 +8,124 @@ import {
 } from "./constants";
 
 async function getUserData() {
-    try {
-        const response = await fetch(API_USER_ENDPOINT, {
-            headers: API_GET_HEADERS
-        });
-
-        if (response.ok) {
-            return await response.json();
-        } else {
-            await Promise.reject(`HTTP error ${response.status}`);
-        }
-    } catch (error) {
-        console.error('Error fetching user data:', error);
-        return null;
+    const response = await fetch(API_USER_ENDPOINT, {
+        headers: API_GET_HEADERS
+    });
+    if (response.ok) {
+        return await response.json();
+    } else {
+        return Promise.reject(new Error(`HTTP error ${response.status}`));
     }
 }
 
 async function updateUserData(name, about) {
-    try {
-        const response = await fetch(API_USER_ENDPOINT, {
-            headers: API_POST_HEADERS,
-            method: 'PATCH',
-            body: JSON.stringify({name, about})
-        });
-
-        if (response.ok) {
-            const updatedUser = await response.json();
-            console.log('User profile updated:', updatedUser);
-            return updatedUser;
-        } else {
-            await Promise.reject(`Error updating profile: ${response.status} - ${response.statusText}`);
-        }
-    } catch (error) {
-        console.error('Error updating profile:', error);
-        throw error;
-    }
-}
-
-async function getCardsData() {
-    try {
-        const response = await fetch(API_CARDS_ENDPOINT, {
-            headers: API_GET_HEADERS
-        });
-
-        if (response.ok) {
-            return await response.json();
-        } else {
-            await Promise.reject(`HTTP error ${response.status}`);
-        }
-    } catch (error) {
-        console.error('Error fetching cards data:', error);
-        return null;
-    }
-}
-
-async function createCardData(name, link) {
-    try {
-        const response = await fetch(API_CARDS_ENDPOINT, {
-            method: 'POST',
-            headers: API_POST_HEADERS,
-            body: JSON.stringify({name, link})
-        });
-
-        if (response.ok) {
-            return await response.json();
-        } else {
-            await Promise.reject(`Ошибка: ${response.status}`);
-        }
-    } catch (error) {
-        console.error('Error creating new card:', error);
-        throw error;
-    }
-}
-
-async function unlikeCard(card, cardLikeButton, cardLikes) {
-    try {
-        const response = await fetch(`${API_CARDS_LIKES_ENDPOINT}${card._id}`, {
-            method: 'DELETE',
-            headers: API_POST_HEADERS
-        });
-
-        if (response.ok) {
-            const updatedCard = await response.json();
-            cardLikeButton.classList.remove('card__like-button_is-active');
-            cardLikes.textContent = updatedCard.likes.length;
-            return updatedCard;
-        } else {
-            await Promise.reject(`Ошибка: ${response.status}`);
-        }
-    } catch (error) {
-        console.error('Error unliking card:', error);
-        throw error;
-    }
-}
-
-async function likeCard(card, cardLikeButton, cardLikes) {
-    try {
-        const response = await fetch(`${API_CARDS_LIKES_ENDPOINT}${card._id}`, {
-            method: 'PUT',
-            headers: API_POST_HEADERS
-        });
-
-        if (response.ok) {
-            const updatedCard = await response.json();
-            cardLikeButton.classList.add('card__like-button_is-active');
-            cardLikes.textContent = updatedCard.likes.length;
-            return updatedCard;
-        } else {
-            await Promise.reject(`Ошибка: ${response.status}`);
-        }
-    } catch (error) {
-        console.error('Error liking card:', error);
-        throw error;
-    }
-}
-
-async function deleteCard(card) {
-    try {
-        const response = await fetch(`${API_CARDS_ENDPOINT}/${card._id}`, {
-            method: 'DELETE',
-            headers: API_POST_HEADERS
-        });
-
-        if (response.ok) {
-            console.log('Карточка успешно удалена');
-        } else {
-            await Promise.reject(`Ошибка: ${response.status}`);
-        }
-    } catch (error) {
-        console.error('Ошибка при удалении карточки:', error);
-        throw error;
+    const response = await fetch(API_USER_ENDPOINT, {
+        headers: API_POST_HEADERS,
+        method: 'PATCH',
+        body: JSON.stringify({name, about})
+    });
+    if (response.ok) {
+        return response.json();
+    } else {
+        return Promise.reject(
+            new Error(
+                `Error updating profile: ${response.status} - ${response.statusText}`
+            )
+        );
     }
 }
 
 async function updateAvatar(link) {
-    try {
-        const response = await fetch(API_USER_AVATAR_ENDPOINT, {
-            method: 'PATCH',
-            headers: API_POST_HEADERS,
-            body: JSON.stringify({avatar: link})
-        });
+    const response = await fetch(API_USER_AVATAR_ENDPOINT, {
+        method: 'PATCH',
+        headers: API_POST_HEADERS,
+        body: JSON.stringify({avatar: link})
+    });
+    if (response.ok) {
+        console.log('Avatar updated successfully');
+        return response.json();
+    } else {
+        return Promise.reject(
+            new Error(
+                `Ошибка обновления профиля: ${response.status} - ${response.statusText}`
+            )
+        );
+    }
+}
 
-        if (response.ok) {
-            console.log('Avatar updated successfully');
-            return response;
-        } else {
-            await Promise.reject(`Ошибка обновления профиля: ${response.status} - ${response.statusText}`);
-        }
-    } catch (error) {
-        console.error('Ошибка обновления профиля:', error);
-        throw error;
+async function getCardsData() {
+    const response = await fetch(API_CARDS_ENDPOINT, {
+        headers: API_GET_HEADERS
+    });
+    if (response.ok) {
+        return response.json();
+    } else {
+        return Promise.reject(new Error(`HTTP error ${response.status}`));
+    }
+}
+
+async function createCardData(name, link) {
+    const response = await fetch(API_CARDS_ENDPOINT, {
+        method: 'POST',
+        headers: API_POST_HEADERS,
+        body: JSON.stringify({name, link})
+    });
+    if (response.ok) {
+        return response.json();
+    } else {
+        return Promise.reject(new Error(`Ошибка: ${response.status}`));
+    }
+}
+
+async function unlikeCard(card) {
+    const response = await fetch(`${API_CARDS_LIKES_ENDPOINT}${card._id}`, {
+        method: 'DELETE',
+        headers: API_POST_HEADERS
+    });
+    if (response.ok) {
+        return await response.json();
+    } else {
+        return Promise.reject(new Error(`Ошибка: ${response.status}`));
+    }
+}
+
+async function likeCard(card) {
+    const response = await fetch(`${API_CARDS_LIKES_ENDPOINT}${card._id}`, {
+        method: 'PUT',
+        headers: API_POST_HEADERS
+    });
+    if (response.ok) {
+        return await response.json();
+    } else {
+        return Promise.reject(new Error(`Ошибка: ${response.status}`));
+    }
+}
+
+async function deleteCard(card) {
+    const response = await fetch(`${API_CARDS_ENDPOINT}/${card._id}`, {
+        method: 'DELETE',
+        headers: API_POST_HEADERS
+    });
+    if (response.ok) {
+        console.log('Карточка успешно удалена');
+    } else {
+        return Promise.reject(new Error(`Ошибка: ${response.status}`));
     }
 }
 
 async function updateData() {
-    try {
-        const [userData, cardsData] = await Promise.all([
-            getUserData(),
-            getCardsData()
-        ]);
-
-        return {
-            user: userData,
-            cards: cardsData
-        };
-    } catch (error) {
-        console.error('Ошибка при получении данных:', error);
-        return {
-            user: null,
-            cards: null
-        };
-    }
+    const [userData, cardsData] = await Promise.all([
+        getUserData(),
+        getCardsData()
+    ]);
+    return {
+        user: userData,
+        cards: cardsData
+    };
 }
 
 export {
-    getUserData,
     updateUserData,
-    getCardsData,
     createCardData,
     deleteCard,
     likeCard,

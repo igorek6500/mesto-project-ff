@@ -1,6 +1,3 @@
-import {clearForm} from "./validation";
-
-
 const closeWithEscapeButton = (e) => {
     if (e.key === "Escape") {
         const modalIsOpen = document.querySelector('.popup_is-opened');
@@ -13,12 +10,6 @@ const closeWithEscapeButton = (e) => {
 const openModalPopup = (domElement) => {
     domElement.classList.toggle("popup_is-opened");
     document.addEventListener('keydown', closeWithEscapeButton);
-    if (
-        domElement.classList.contains('popup_type_new-card') ||
-        domElement.classList.contains('popup_type_new-avatar')
-    ) {
-        clearForm(domElement);
-    }
 }
 
 const closeModalPopup = (domElement) => {
@@ -38,6 +29,5 @@ const setupModalCloseListeners = (popupList) => {
         });
     });
 }
-
 
 export {openModalPopup, closeModalPopup, setupModalCloseListeners};

@@ -1,6 +1,4 @@
-import {closeModalPopup, openModalPopup} from "./modal";
-import {createCardData, deleteCard, getCardsData, likeCard, unlikeCard} from "./api";
-
+import {deleteCard, likeCard, unlikeCard} from "./api";
 
 const cardTemplate = document
     .querySelector('#card-template')
@@ -8,25 +6,44 @@ const cardTemplate = document
     .querySelector('.places__item');
 
 function onDeleteCard(cardElement, card) {
-    deleteCard(card).then(() => cardElement.remove());
+    try {
+        deleteCard(card).then(() => cardElement.remove());
+    } catch (error) {
+        console.error('Ошибка при удалении карточки:', error);
+        throw error;
+    }
 }
 
 function onLike(cardElement, card, user) {
     const cardLikeButton = cardElement.querySelector('.card__like-button');
     const cardLikes = cardElement.querySelector('.card__likes');
-    let isLiked = card.likes.some(like => like._id === user._id);
+    const isLiked = cardLikeButton.classList.contains('card__like-button_is-active');
     if (isLiked) {
-        unlikeCard(card, cardLikeButton, cardLikes)
-            .then(updatedCard => {
-                card.likes = updatedCard.likes;
-                cardLikes.textContent = updatedCard.likes.length === 0 ? '' : updatedCard.likes.length;
-            });
+        try {
+            unlikeCard(card)
+                .then(updatedCard => {
+                    cardLikeButton.classList.remove('card__like-button_is-active');
+                    cardLikes.textContent = updatedCard.likes.length;
+                    card.likes = updatedCard.likes;
+                    cardLikes.textContent = updatedCard.likes.length === 0 ? '' : updatedCard.likes.length;
+                });
+        } catch (error) {
+            console.error('Error unliking card:', error);
+            throw error;
+        }
     } else {
-        likeCard(card, cardLikeButton, cardLikes)
-            .then(updatedCard => {
-                card.likes = updatedCard.likes;
-                cardLikes.textContent = updatedCard.likes.length === 0 ? '' : updatedCard.likes.length;
-            });
+        try {
+            likeCard(card)
+                .then(updatedCard => {
+                    cardLikeButton.classList.add('card__like-button_is-active');
+                    cardLikes.textContent = updatedCard.likes.length;
+                    card.likes = updatedCard.likes;
+                    cardLikes.textContent = updatedCard.likes.length === 0 ? '' : updatedCard.likes.length;
+                });
+        } catch (error) {
+            console.error('Error liking card:', error);
+            throw error;
+        }
     }
 }
 
@@ -53,49 +70,4 @@ function createCard(card, user, onDeleteCard, onLike, onImageClick) {
     return cardElement;
 }
 
-function submitNewCardForm(e, imageModal, user, container, newCardModal, newPlaceForm) {
-    e.preventDefault();
-
-    createCardData(newPlaceForm.elements['place-name'].value, newPlaceForm.elements['link'].value).then(() => {
-        return getCardsData();
-    })
-        .then(() => {
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
-            renderCards(container, user, (e) => {
-                openPopupWithImage(e, imageModal)
-            })
-            closeModalPopup(newCardModal);
-            newPlaceForm.reset();
-        })
-}
-
-function openPopupWithImage(evt, imageModal) {
-    const {alt, src} = evt.target;
-    setPopupCaption(alt, imageModal.querySelector('.popup__caption'));
-    setPopupImage(src, alt, imageModal.querySelector('.popup__image'));
-    openModalPopup(imageModal);
-}
-
-function setPopupCaption(caption, imageCaption) {
-    imageCaption.textContent = caption;
-}
-
-function setPopupImage(src, alt, imageElement) {
-    imageElement.src = src;
-    imageElement.alt = alt;
-}
-
-function renderCards(cardsContainer, user, openPopupWithImage) {
-    getCardsData().then(data => {
-        data.forEach(x => {
-            cardsContainer.appendChild(createCard(x, user, onDeleteCard, onLike, openPopupWithImage));
-        });
-    })
-}
-
-export {openPopupWithImage, submitNewCardForm, renderCards};
-
-
-
+export {createCard, onDeleteCard, onLike};
