@@ -6,12 +6,8 @@ const cardTemplate = document
     .querySelector('.places__item');
 
 function onDeleteCard(cardElement, card) {
-    try {
-        deleteCard(card).then(() => cardElement.remove());
-    } catch (error) {
-        console.error('Ошибка при удалении карточки:', error);
-        throw error;
-    }
+    deleteCard(card).then(() => cardElement.remove())
+        .catch((error) => console.error('Ошибка при удалении карточки:', error));
 }
 
 function onLike(cardElement, card, user) {
@@ -19,31 +15,23 @@ function onLike(cardElement, card, user) {
     const cardLikes = cardElement.querySelector('.card__likes');
     const isLiked = cardLikeButton.classList.contains('card__like-button_is-active');
     if (isLiked) {
-        try {
-            unlikeCard(card)
-                .then(updatedCard => {
-                    cardLikeButton.classList.remove('card__like-button_is-active');
-                    cardLikes.textContent = updatedCard.likes.length;
-                    card.likes = updatedCard.likes;
-                    cardLikes.textContent = updatedCard.likes.length === 0 ? '' : updatedCard.likes.length;
-                });
-        } catch (error) {
-            console.error('Error unliking card:', error);
-            throw error;
-        }
+        unlikeCard(card)
+            .then(updatedCard => {
+                cardLikeButton.classList.remove('card__like-button_is-active');
+                cardLikes.textContent = updatedCard.likes.length;
+                card.likes = updatedCard.likes;
+                cardLikes.textContent = updatedCard.likes.length === 0 ? '' : updatedCard.likes.length;
+            })
+            .catch(error => console.error('Error unliking card:', error));
     } else {
-        try {
-            likeCard(card)
-                .then(updatedCard => {
-                    cardLikeButton.classList.add('card__like-button_is-active');
-                    cardLikes.textContent = updatedCard.likes.length;
-                    card.likes = updatedCard.likes;
-                    cardLikes.textContent = updatedCard.likes.length === 0 ? '' : updatedCard.likes.length;
-                });
-        } catch (error) {
-            console.error('Error liking card:', error);
-            throw error;
-        }
+        likeCard(card)
+            .then(updatedCard => {
+                cardLikeButton.classList.add('card__like-button_is-active');
+                cardLikes.textContent = updatedCard.likes.length;
+                card.likes = updatedCard.likes;
+                cardLikes.textContent = updatedCard.likes.length === 0 ? '' : updatedCard.likes.length;
+            })
+            .catch(error => console.error('Error liking card:', error));
     }
 }
 

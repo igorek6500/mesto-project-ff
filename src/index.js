@@ -12,25 +12,22 @@ enableValidation(validationConfig);
 
 function submitNewCardForm(e, imageModal, user, container, newCardModal, newPlaceForm) {
     e.preventDefault();
-    try {
-        createCardData(newPlaceForm.elements['place-name'].value, newPlaceForm.elements['link'].value)
-            .then((card) => {
-                container.prepend(
-                    createCard(
-                        card,
-                        user,
-                        onDeleteCard,
-                        onLike,
-                        (e) => openPopupWithImage(e, imageModal)
-                    )
-                );
-                closeModalPopup(newCardModal);
-                newPlaceForm.reset();
-            });
-    } catch (error) {
-        console.error('Error creating new card:', error);
-        throw error;
-    }
+
+    createCardData(newPlaceForm.elements['place-name'].value, newPlaceForm.elements['link'].value)
+        .then((card) => {
+            container.prepend(
+                createCard(
+                    card,
+                    user,
+                    onDeleteCard,
+                    onLike,
+                    (e) => openPopupWithImage(e, imageModal)
+                )
+            );
+            newPlaceForm.reset();
+        })
+        .catch(error => console.error('Error creating new card:', error))
+        .finally(() => closeModalPopup(newCardModal));
 }
 
 function openPopupWithImage(evt, imageModal) {
@@ -58,28 +55,27 @@ function openEditProfileForm(profileName, profileDescription, editProfileModal, 
 }
 
 updateData().then((data) => {
-    try {
-        if (data.user) {
-            user = data.user;
-            updateProfileInfo(data.user.name, data.user.about, DOM_ELEMENTS.profileName, DOM_ELEMENTS.profileDescription);
-            updateProfileAvatar(data.user.avatar, DOM_ELEMENTS.avatar);
-        }
-        if (data.cards) {
-            data.cards.forEach(card => {
-                DOM_ELEMENTS.container.appendChild(
-                    createCard(card, data.user, onDeleteCard, onLike, (e) => {
-                        openPopupWithImage(e, DOM_ELEMENTS.imageModal);
-                    })
-                )
-            })
-        }
-    } catch (error) {
-        console.error('Ошибка при получении данных:', error);
-        return {
-            user: null,
-            cards: null
-        };
+
+    if (data.user) {
+        user = data.user;
+        updateProfileInfo(data.user.name, data.user.about, DOM_ELEMENTS.profileName, DOM_ELEMENTS.profileDescription);
+        updateProfileAvatar(data.user.avatar, DOM_ELEMENTS.avatar);
     }
+    if (data.cards) {
+        data.cards.forEach(card => {
+            DOM_ELEMENTS.container.appendChild(
+                createCard(card, data.user, onDeleteCard, onLike, (e) => {
+                    openPopupWithImage(e, DOM_ELEMENTS.imageModal);
+                })
+            )
+        })
+    }
+}).catch(error => {
+    console.error('Ошибка при получении данных:', error);
+    return {
+        user: null,
+        cards: null
+    };
 });
 
 setupModalCloseListeners(DOM_ELEMENTS.popupList);

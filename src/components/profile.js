@@ -18,37 +18,37 @@ function submitProfileEditForm(
     editProfileForm
 ) {
     event.preventDefault();
-    try {
-        updateUserData(
-            editProfileForm.elements.name.value,
-            editProfileForm.elements.description.value
-        )
-            .then(user => {
-                updateProfileInfo(
-                    user.name,
-                    user.about,
-                    profileName,
-                    profileDescription
-                )
-            });
-    } catch (error) {
-        console.error('Error updating profile:', error);
-        throw error;
-    }
-    closeModalPopup(editProfileModal);
+
+    updateUserData(
+        editProfileForm.elements.name.value,
+        editProfileForm.elements.description.value
+    )
+        .then(user => {
+            updateProfileInfo(
+                user.name,
+                user.about,
+                profileName,
+                profileDescription
+            )
+        })
+        .catch(error => {
+
+            console.error('Error updating profile:', error)
+        })
+        .finally(() => closeModalPopup(editProfileModal));
+
+
 }
 
 function submitNewAvatar(event, editAvatarModal, editAvatarForm, profileAvatar) {
     event.preventDefault();
-    try {
-        updateAvatar(editAvatarForm.link.value).then((user) => {
+    updateAvatar(editAvatarForm.link.value)
+        .then((user) => {
             updateProfileAvatar(user.avatar, profileAvatar);
-            closeModalPopup(editAvatarModal)
-        });
-    } catch (error) {
-        console.error('Ошибка обновления профиля:', error);
-        throw error;
-    }
+        }).catch(error => {
+        console.error('Ошибка обновления профиля:', error)
+    }).finally(() => closeModalPopup(editAvatarModal));
+
 }
 
 export {submitProfileEditForm, submitNewAvatar, updateProfileInfo, updateProfileAvatar}
