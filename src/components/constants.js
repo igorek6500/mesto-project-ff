@@ -55,3 +55,14 @@ export const validationConfig = {
     inputErrorClass: 'popup__input-error',
     errorClass: 'error_active'
 }
+
+export const buttonsText = {
+    savingText: 'Сохранение...',
+    defaultText: 'Сохранить'
+}
+
+const submitButtonProfileEditForm = DOM_ELEMENTS.editProfileForm.querySelector('button[type="submit"]');
+const submitButtonNewCardForm = DOM_ELEMENTS.newPlaceForm.querySelector('button[type="submit"]');
+const submitButtonEditAvatarForm = DOM_ELEMENTS.editAvatarForm.querySelector('button[type="submit"]');
+
+export {submitButtonProfileEditForm, submitButtonNewCardForm, submitButtonEditAvatarForm}

@@ -3,16 +3,17 @@ import {createCardData, updateData} from "./components/api";
 import {submitNewAvatar, submitProfileEditForm, updateProfileAvatar, updateProfileInfo} from "./components/profile";
 import {closeModalPopup, openModalPopup, setupModalCloseListeners} from "./components/modal";
 import {createCard, onDeleteCard, onLike} from "./components/card";
-import {DOM_ELEMENTS, validationConfig} from "./components/constants";
+import {buttonsText, DOM_ELEMENTS, submitButtonNewCardForm, validationConfig} from "./components/constants";
 import {clearValidation, enableValidation} from "./components/validation";
 
 let user;
 
 enableValidation(validationConfig);
 
+
 function submitNewCardForm(e, imageModal, user, container, newCardModal, newPlaceForm) {
     e.preventDefault();
-
+    submitButtonNewCardForm.textContent = buttonsText.savingText;
     createCardData(newPlaceForm.elements['place-name'].value, newPlaceForm.elements['link'].value)
         .then((card) => {
             container.prepend(
@@ -24,10 +25,11 @@ function submitNewCardForm(e, imageModal, user, container, newCardModal, newPlac
                     (e) => openPopupWithImage(e, imageModal)
                 )
             );
+            closeModalPopup(newCardModal)
             newPlaceForm.reset();
         })
         .catch(error => console.error('Error creating new card:', error))
-        .finally(() => closeModalPopup(newCardModal));
+        .finally(() => submitButtonNewCardForm.textContent = buttonsText.defaultText);
 }
 
 function openPopupWithImage(evt, imageModal) {
@@ -89,8 +91,6 @@ DOM_ELEMENTS.editProfileButton.addEventListener("click", () => {
     )
 });
 DOM_ELEMENTS.editProfileModal.addEventListener("submit", async (e) => {
-    const submitButton = DOM_ELEMENTS.editProfileForm.querySelector('button[type="submit"]');
-    submitButton.textContent = "Сохранение...";
     try {
         await submitProfileEditForm(
             e,
@@ -100,9 +100,7 @@ DOM_ELEMENTS.editProfileModal.addEventListener("submit", async (e) => {
             DOM_ELEMENTS.editProfileForm,
             DOM_ELEMENTS.avatar
         );
-        submitButton.textContent = "Сохранить";
     } catch (error) {
-        submitButton.textContent = "Сохранить";
         console.error("Ошибка:", error);
     }
 });
@@ -112,8 +110,6 @@ DOM_ELEMENTS.addCardButton.addEventListener("click", () => {
     openModalPopup(DOM_ELEMENTS.newCardModal);
 });
 DOM_ELEMENTS.newCardModal.addEventListener("submit", async (e) => {
-    const submitButton = DOM_ELEMENTS.newPlaceForm.querySelector('button[type="submit"]');
-    submitButton.textContent = "Сохранение...";
     try {
         await submitNewCardForm(
             e,
@@ -123,9 +119,8 @@ DOM_ELEMENTS.newCardModal.addEventListener("submit", async (e) => {
             DOM_ELEMENTS.newCardModal,
             DOM_ELEMENTS.newPlaceForm
         );
-        submitButton.textContent = "Сохранить";
+
     } catch (error) {
-        submitButton.textContent = "Сохранить";
         console.error("Ошибка:", error);
     }
 });
@@ -136,8 +131,6 @@ DOM_ELEMENTS.editAvatarButton.addEventListener('click', () => {
     openModalPopup(DOM_ELEMENTS.editAvatarModal);
 });
 DOM_ELEMENTS.editAvatarModal.addEventListener("submit", async (e) => {
-    const submitButton = DOM_ELEMENTS.editAvatarForm.querySelector('button[type="submit"]');
-    submitButton.textContent = "Сохранение...";
     try {
         await submitNewAvatar(
             e,
@@ -145,9 +138,7 @@ DOM_ELEMENTS.editAvatarModal.addEventListener("submit", async (e) => {
             DOM_ELEMENTS.editAvatarForm,
             DOM_ELEMENTS.avatar
         );
-        submitButton.textContent = "Сохранить";
     } catch (error) {
-        submitButton.textContent = "Сохранить";
         console.error("Ошибка:", error);
     }
 });
